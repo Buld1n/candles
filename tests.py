@@ -10,6 +10,11 @@ file_path = os.path.join(current_dir, 'prices.csv')
 
 
 def test_read_trades():
+    """
+    Тестирование функции read_trades:
+    - Проверка наличия столбцов 'TS' и 'PRICE'
+    - Проверка формата вывода (DataFrame)
+    """
     data = read_trades(file_path)
     assert isinstance(data, pd.DataFrame), "Output should be a DataFrame"
     assert "TS" in data.columns, "TS column missing"
@@ -17,6 +22,11 @@ def test_read_trades():
 
 
 def test_form_candlesticks():
+    """
+    Тестирование функции form_candlesticks:
+    - Проверка формата вывода (DataFrame)
+    - Проверка наличия необходимых столбцов (open, high, low, close)
+    """
     data = read_trades(file_path)
     ohlc = form_candlesticks(data)
     assert isinstance(ohlc, pd.DataFrame), "Output should be a DataFrame"
@@ -25,24 +35,29 @@ def test_form_candlesticks():
 
 
 def test_candlestick_values():
+    """
+    Тестирование значений свечных графиков:
+    - Проверка корректности значений open, close, high, low для первого интервала времени
+    """
     data = read_trades(file_path)
     ohlc = form_candlesticks(data)
-    # Проверка, что значение 'open' равно первому значению 'PRICE' в интервале
     assert ohlc["open"].iloc[0] == data["PRICE"].iloc[0], "Open value mismatch"
-    # Проверка, что значение 'close' равно последнему значению 'PRICE' в интервале
     last_value_before_next_ohlc = data[data.index < ohlc.index[1]]["PRICE"].iloc[-1]
     assert ohlc["close"].iloc[0] == last_value_before_next_ohlc, "Close value mismatch"
-    # Проверка, что значение 'high' действительно максимальное в интервале
     assert (
         ohlc["high"].iloc[0] == data["PRICE"][data.index < ohlc.index[1]].max()
     ), "High value mismatch"
-    # Проверка, что значение 'low' действительно минимальное в интервале
     assert (
         ohlc["low"].iloc[0] == data["PRICE"][data.index < ohlc.index[1]].min()
     ), "Low value mismatch"
 
 
 def test_calculate_ema():
+    """
+    Тестирование функции calculate_ema:
+    - Проверка формата вывода (pd.Series)
+    - Проверка согласованности длины EMA и OHLC
+    """
     data = read_trades(file_path)
     ohlc = form_candlesticks(data)
     ema_14 = calculate_ema(ohlc["close"], 14)
@@ -51,10 +66,14 @@ def test_calculate_ema():
 
 
 def test_ema_values():
+    """
+    Тестирование корректности значений EMA:
+    - Проверка первого рассчитанного значения EMA
+    - Проверка последующих значений EMA на основе формулы расчета
+    """
     data = read_trades(file_path)
     ohlc = form_candlesticks(data)
     ema_14 = calculate_ema(ohlc["close"], 14)
-    # Проверка корректности расчета EMA
     alpha = 2 / (14 + 1)
     expected_ema = (ohlc["close"].iloc[14] - ema_14.iloc[13]) * alpha + ema_14.iloc[13]
     assert np.isclose(
