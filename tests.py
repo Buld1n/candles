@@ -25,7 +25,7 @@ def test_form_candlesticks():
     """
     Тестирование функции form_candlesticks:
     - Проверка формата вывода (DataFrame)
-    - Проверка наличия необходимых столбцов (open, high, low, close)
+    - Проверка наличия необходимых столбцов (open,high,low,close)
     """
     data = read_trades(file_path)
     ohlc = form_candlesticks(data)
