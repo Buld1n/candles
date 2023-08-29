@@ -22,6 +22,7 @@ def run_tests():
     test_ema_values()
     print("Все тесты успешно пройдены!")
 
+
 # Запускаем тесты
 run_tests()
 
