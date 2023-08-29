@@ -1,4 +1,6 @@
+import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from mplfinance.original_flavor import candlestick_ohlc
 from read_trades import read_trades
 from candlestick_formation import form_candlesticks
 from calculate_ema import calculate_ema
@@ -20,7 +22,6 @@ def run_tests():
     test_ema_values()
     print("Все тесты успешно пройдены!")
 
-
 # Запускаем тесты
 run_tests()
 
@@ -37,13 +38,16 @@ ema_14.to_csv("ema_14_data.csv")  # Сохранение данных EMA
 
 # График
 fig, ax = plt.subplots(figsize=(15, 7))
-ax.plot(ohlc.index, ohlc["close"], label="Close Price", color="blue", linewidth=1)
-ax.plot(ema_14.index, ema_14, label="14-period EMA", color="red", linewidth=1.5)
+ohlc['Date_Num'] = mdates.date2num(ohlc.index.to_pydatetime())
+candlestick_data = [tuple(x) for x in ohlc[['Date_Num', 'open', 'high', 'low', 'close']].values]
+candlestick_ohlc(ax, candlestick_data, width=0.6, colorup='g', colordown='r')
+ax.plot(ohlc.index, ema_14, label="14-period EMA", color="yellow")
 ax.set_xlabel("Date")
 ax.set_ylabel("Price")
 ax.set_title("Candlestick with 14-period EMA")
-ax.legend()
+ax.legend(loc='upper right')
 plt.tight_layout()
 plt.grid(True, which="both", linestyle="--", linewidth=0.5)
 plt.xticks(rotation=45)
 plt.savefig("output_chart.png")  # Сохранение графика в файл
+plt.show()
