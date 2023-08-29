@@ -7,7 +7,7 @@ fonttools==4.42.1
 kiwisolver==1.4.5
 matplotlib==3.7.2
 mccabe==0.7.0
-mplfinance
+mplfinance==0.12.10b0
 mypy-extensions==1.0.0
 numpy==1.25.2
 packaging==23.1
